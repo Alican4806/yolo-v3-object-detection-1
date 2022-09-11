@@ -4,7 +4,7 @@ import numpy as np
 cap = cv.VideoCapture(0)
 whT = 320 # The parameters of the width and the height is set.
 
-confThreshold = 0.9 # The threshold of the confidence is this parameter.
+confThreshold = 0.5 # The threshold of the confidence is this parameter.
 nmsThreshold = 0.3
 with open('coco.names','r') as coco:
     coconames = coco.read().rstrip().split('\n') # The space is removed by rstrip.
@@ -25,22 +25,22 @@ def findObjects(outputs, img):
     hT ,wT, cT = img.shape
     bbox =[]
    
-    classIds = [] # It will hold what is.
-    confidences = [] # It 
+    classIds = [] # It will hold what it  is.
+    confidences = [] # It will hold confidences value
     
     for output in outputs: # There were 3 outputs.
-        for det in output: 
-            scores = det[5:]
+        for det in output: # It has 85 columns for each output
+            scores = det[5:] # Only the part with the objects was taken.
             classId = np.argmax(scores)
-            # print(classId)
-            # print(scores)
+            # print(classId) # It will hold what it is.
+            
             confidence = scores[classId] # The confidence is found.
             
             if confidence > confThreshold:
                 
                 w,h = int(det[2]*wT) , int(det[3]*hT) # The width and height of the bounding box is found.
                 x1,y1 = int((det[0]*wT)-w/2),int((det[1]*hT)-h/2) # Start point of the bounding box.
-                bbox.append([x1,y1,w,h])
+                bbox.append([x1,y1,w,h]) # The information is about features of the object.
                 classIds.append(classId)
                 confidences.append(float(confidence))
     # print(len(bbox))
